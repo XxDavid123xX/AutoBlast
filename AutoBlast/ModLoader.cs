@@ -20,21 +20,8 @@ namespace PizzaOven
             RestoreDirectory(Global.config.ModsFolder);
             // Delete all banks that aren't vanilla
             var banks = new List<string> (new string[] { "master.bank", "master.strings.bank", "music.bank", "sfx.bank" });
-            foreach (var file in Directory.GetFiles($"{Global.config.ModsFolder}{Global.s}sound{Global.s}Desktop", "*", SearchOption.AllDirectories))
-                if (!banks.Contains(Path.GetFileName(file).ToLowerInvariant()))
-                    try {
-                        File.Delete(file);
-                    }
-                    catch (Exception e)
-                    {
-                        if (e is System.UnauthorizedAccessException)
-                            Global.logger.WriteLine($"Access denied when trying to delete {file}. Try reinstalling Pizza Tower to a folder you have access to or running Pizza Oven in administrator mode", LoggerType.Error);
-                        else
-                            throw;
-                        return false;
-                    }
             // Delete all dlls that aren't vanilla
-            var dlls = new List<string>(new string[] { "fmod.dll", "fmod-gamemaker.dll", "fmodstudio.dll", "gameframe_x64.dll", "steam_api.dll",
+            var dlls = new List<string>(new string[] {"steam_api.dll",
             "steam_api64.dll", "steamworks_x64.dll"});
             // Also delete mp4 files
             foreach (var file in Directory.GetFiles($"{Global.config.ModsFolder}", "*", SearchOption.TopDirectoryOnly))
@@ -51,20 +38,6 @@ namespace PizzaOven
                                 throw;
                             return false;
                         }
-            // Delete empty folders
-            foreach (var directory in Directory.GetDirectories($"{Global.config.ModsFolder}{Global.s}sound{Global.s}Desktop"))
-                    try {
-                        if (Directory.GetFiles(directory).Length == 0 && Directory.GetDirectories(directory).Length == 0)
-                            Directory.Delete(directory, false);
-                    }
-                    catch (Exception e)
-                    {
-                        if (e is System.UnauthorizedAccessException)
-                            Global.logger.WriteLine($"Access denied when trying to delete {directory}. Try reinstalling Pizza Tower to a folder you have access to or running Pizza Oven in administrator mode", LoggerType.Error);
-                        else
-                            throw;
-                        return false;
-                    }
             // Delete .win from older version of Pizza Oven
             if (File.Exists($"{Global.config.ModsFolder}{Global.s}PizzaOven.win"))
                 try {
@@ -156,14 +129,14 @@ namespace PizzaOven
                             errors++;
                         }
                     }
-                    // Language .txt files
-                    else if (extension.Equals(".txt", StringComparison.InvariantCultureIgnoreCase))
+                    // Language .csv files
+                    else if (extension.Equals(".csv", StringComparison.InvariantCultureIgnoreCase))
                     {
                         // Verify .txt file is for language
-                        if (File.ReadAllText(modFile).Contains("lang = ", StringComparison.InvariantCultureIgnoreCase))
+                        if (File.ReadAllText(modFile).Contains(",EN", StringComparison.InvariantCultureIgnoreCase))
                         {
                             // Copy over file to lang folder
-                            File.Copy(modFile, $"{Global.config.ModsFolder}{Global.s}lang{Global.s}{Path.GetFileName(modFile)}", true);
+                            File.Copy(modFile, $"{Global.config.ModsFolder}{Global.s}localization{Global.s}{Path.GetFileName(modFile)}", true);
                             Global.logger.WriteLine($"Copied over {Path.GetFileName(modFile)} to language folder", LoggerType.Info);
                             successes++;
                         }
